@@ -1,0 +1,5 @@
+build/
+*.so
+outcmaes/
+__pycache__
+pygkls.cc

@@ -1,0 +1,75 @@
+name: Build GKLS
+
+on:
+  push:
+    branches: [ "main", "dev"]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  build-x86-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install python3
+          sudo apt-get install -y python3-dev
+          python -m pip install --upgrade pip
+      
+      # Runs a single command using the runners shell
+      - name: Build GKLS
+        run: |
+          export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/.local/lib
+          sh build_and_install.sh
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: linux-artifact
+          path: |
+            pygkls/libpygkls.so
+            pygkls/pygkls*.so
+  
+  build-x86-macos:
+    runs-on: macos-latest
+    needs: build-x86-linux
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+      
+      - name: Install dependencies
+        run: |
+          brew uninstall python --ignore-dependencies
+          brew cleanup python
+          python -m pip install --upgrade pip
+          python -m pip install pybind11
+
+      - name: Build GKLS
+        run: |
+          export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$HOME/.local/lib
+          sh build_and_install.sh
+      
+      - name: Download artifact
+        uses: actions/download-artifact@master
+        with:
+          name: linux-artifact
+      
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          body: "Please, make sure to put `pygkls*.so` in the Python package directory and `libpygkls.{so, dylib}` in the dinamyc library directory."
+          files: |
+            *.so
+            pygkls/*.so
+            pygkls/*.dylib
