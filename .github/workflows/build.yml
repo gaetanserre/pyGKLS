@@ -37,15 +37,11 @@ jobs:
             pygkls/libpygkls.so
             pygkls/pygkls*.so
   
-  build-x86-macos:
+  build-arm-macos:
     runs-on: macos-latest
     needs: build-x86-linux
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Homebrew
-        id: set-up-homebrew
-        uses: Homebrew/actions/setup-homebrew@master
       
       - name: Install dependencies
         run: |
