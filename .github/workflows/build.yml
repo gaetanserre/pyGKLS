@@ -2,7 +2,7 @@ name: Build GKLS
 
 on:
   push:
-    branches: [ "main", "dev"]
+    branches: [ "main", "dev", "opti"]
     tags:
       - 'v*'
   pull_request:
