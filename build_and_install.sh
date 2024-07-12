@@ -5,6 +5,9 @@ Red="\033[0;31m"
 Green="\033[0;92m"
 NC="\033[0m"
 
+platform=$(python -c "import platform; print(platform.processor())")
+echo -e "${Purple}Running on ${platform} platform${NC}"
+
 unameOut="$(uname -s)"
 case "${unameOut}" in
     Linux*)     lib_ext=so; lib_path=LD_LIBRARY_PATH;;

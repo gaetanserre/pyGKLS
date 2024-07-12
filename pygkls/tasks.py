@@ -2,7 +2,7 @@ import invoke
 import os
 
 # Get the include path for the python3 interpreter
-python_include = os.popen("python3 -m pybind11 --includes").read().strip()
+python_include = os.popen("python -m pybind11 --includes").read().strip()
 
 # check if macos
 lib_name = "libpygkls.so"

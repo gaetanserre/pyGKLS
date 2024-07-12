@@ -37,7 +37,7 @@ jobs:
             pygkls/libpygkls.so
             pygkls/pygkls*.so
   
-  build-x86-macos:
+  build-arm-macos:
     runs-on: macos-latest
     needs: build-x86-linux
     steps:
