@@ -12,6 +12,10 @@ To install pyGKLS, one need `Python 3.12` or later, `CMake 3.28` or later, and a
 ```
 This will build the C++ dynamic library and the Cython package. Then, it will copy the Cython package to the Python site-packages directory and the shared library to `$HOME/.local/lib`. Make sure that `LD_LIBRARY_PATH` (or `DYLD_LIBRARY_PATH` for macOS) includes `$HOME/.local/lib`.
 
+
+> [!WARNING]  
+> To use pyGKLS in Jupyter notebooks, it seems that one needs to put the shared library (`libpygkls.{so|dylib}`) in the global library path (e.g. `/usr/local/lib`), or to create a symbolic link. One can also put the shared library in the same directory as the notebook.
+
 ### Usage
 The Python interface is simple and easy to use. Here is an example of how to generate a GKLS function:
 ```python
