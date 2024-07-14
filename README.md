@@ -14,7 +14,7 @@ This will build the C++ dynamic library and the Cython package. Then, it will co
 
 
 > [!WARNING]  
-> To use pyGKLS in Jupyter notebooks, it seems that one needs to put the shared library (`libpygkls.{so|dylib}`) in the global library path (e.g. `/usr/local/lib`), or to create a symbolic link. One can also put the shared library in the same directory as the notebook.
+> To use pyGKLS in Jupyter notebooks, it seems that one needs to put the shared library (`libpygkls.{so|dylib}`) in the global library path (e.g. `/usr/lib`), or to create a symbolic link. One can also put the shared library in the same directory as the notebook.
 
 ### Usage
 The Python interface is simple and easy to use. Here is an example of how to generate a GKLS function:
