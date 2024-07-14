@@ -66,7 +66,9 @@ jobs:
         with:
           body: "
             Please, make sure to put `pygkls*.so` in the Python package directory and `libpygkls.{so, dylib}` in the dinamyc library directory.
-            > [!WARNING]  
+            
+            > [!WARNING]
+
             > To use pyGKLS in Jupyter notebooks, it seems that one needs to put the shared library (`libpygkls.{so|dylib}`) in the global library path (e.g. `/usr/local/lib`), or to create a symbolic link. One can also put the shared library in the same directory as the notebook.
             "
           files: |
