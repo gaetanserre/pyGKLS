@@ -5,6 +5,10 @@ Red="\033[0;31m"
 Green="\033[0;92m"
 NC="\033[0m"
 
+echo -e "${Purple}Python version${NC}"
+python --version
+python3 --version
+
 platform=$(python -c "import platform; print(platform.processor())")
 echo -e "${Purple}Running on ${platform} platform${NC}"
 
