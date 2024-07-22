@@ -13,6 +13,7 @@ namespace GKLS {
 
   void set_dim(unsigned int dim) {
     GKLS_dim = dim;
+    set_domain(GKLS_domain_left[0], GKLS_domain_right[0]);
   }
 
   void set_num_minima(unsigned int num_minima) {
@@ -20,10 +21,8 @@ namespace GKLS {
   }
 
   void set_domain(double domain_lo, double domain_hi) {
-    for (int i = 0; i < GKLS_dim; i++) {
-      GKLS_domain_left[i] = domain_lo;
-      GKLS_domain_right[i] = domain_hi;
-    }
+    GKLS_domain_free();
+    GKLS_domain_alloc(domain_lo, domain_hi);
   }
 
   void set_global_dist(double global_dist) {

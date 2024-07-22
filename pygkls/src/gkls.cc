@@ -110,7 +110,7 @@ double GKLS_norm(double *x1, double *x2)
 /* The subroutine has no INPUT parameters                                    */
 /* RETURN VALUE: an error code                                               */
 /*****************************************************************************/
-int GKLS_domain_alloc()
+int GKLS_domain_alloc(double domain_lo, double domain_hi)
 {
   unsigned int i;
 
@@ -123,8 +123,8 @@ int GKLS_domain_alloc()
   /* Set the admissible region as [-1,1]^GKLS_dim */
   for (i = 0; i < GKLS_dim; i++)
   {
-    GKLS_domain_left[i] = -1.0;
-    GKLS_domain_right[i] = 1.0;
+    GKLS_domain_left[i] = domain_lo;
+    GKLS_domain_right[i] = domain_hi;
   }
   return GKLS_OK; /* no errors */
 } /* GKLS_domain_alloc() */
@@ -159,7 +159,7 @@ int GKLS_set_default()
   if ((GKLS_domain_left == NULL) || (GKLS_domain_right == NULL))
   {
     /* define the boundaries  */
-    if ((error = GKLS_domain_alloc()) != GKLS_OK)
+    if ((error = GKLS_domain_alloc(-1, 1)) != GKLS_OK)
       return error;
   }
   /* Find min_side = min |b(i)-a(i)|, D=[a,b], and                       */
