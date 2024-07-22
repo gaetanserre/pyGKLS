@@ -9,14 +9,18 @@ lib_name = "libpygkls.so"
 linker_flag = os.popen("python3-config --ldflags").read().strip()
 if os.uname().sysname == "Darwin":
     lib_name = "libpygkls.dylib"
-    python_version  = ".".join(
+    python_version = ".".join(
         os.popen("python --version").read().strip().split(" ")[-1].split(".")[:-1]
     )
     linker_flag += f" -shared -lpython{python_version}"
 
+
 def print_banner(msg):
     print("==================================================")
     print("= {} ".format(msg))
+
+
+print("AHAHHAHAHAHAHAHAHAHAHHAHAH", python_include, linker_flag)
 
 
 @invoke.task()
