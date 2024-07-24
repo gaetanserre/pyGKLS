@@ -141,7 +141,7 @@ extern T_GKLS_GlobalMinima GKLS_glob;
 
 /*------------------------User function prototypes -------------------------*/
 
-int GKLS_domain_alloc(void); /* allocate boundary vectors   */
+int GKLS_domain_alloc(double domain_lo, double domain_hi); /* allocate boundary vectors   */
 
 void GKLS_domain_free(void); /* deallocate boundary vectors */
 
