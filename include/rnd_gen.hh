@@ -1,7 +1,7 @@
 /************************************************************************/
 /*      The header file for linkage to the file rnd_gen.c               */
 /************************************************************************/
-#if !defined ( __RND_GEN_H )
+#if !defined(__RND_GEN_H)
 #define __RND_GEN_H
 
 // #define KK 100                     /* the long lag */
@@ -15,14 +15,13 @@
 
 #define NUM_RND 1009 /* size of the array of random numbers */
 
-
 extern double rnd_num[NUM_RND]; /* array of random numbers */
 
 /* For rnd_gen.c */
 void ranf_array(double aa[], int n); /* put n new random fractions in aa */
-  /* double *aa  - destination */
-  /* int n       - array length (must be at least KK) */
-void ranf_start(long seed);  /* do this before using ranf_array */
-  /* long seed   - selector for different streams */
+/* double *aa  - destination */
+/* int n       - array length (must be at least KK) */
+void ranf_start(long seed); /* do this before using ranf_array */
+/* long seed   - selector for different streams */
 
 #endif /* __RND_GEN_H */

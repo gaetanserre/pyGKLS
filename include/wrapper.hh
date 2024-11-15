@@ -1,8 +1,9 @@
 #include <vector>
 
-namespace GKLS {
+namespace GKLS
+{
   using namespace std;
-  
+
   void set_default();
 
   int generate(unsigned int nf);
