@@ -3,4 +3,4 @@ build/
 *.dylib
 outcmaes/
 __pycache__
-pygkls.cc
+gkls.cc
