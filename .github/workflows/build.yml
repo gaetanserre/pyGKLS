@@ -54,7 +54,7 @@ jobs:
         with:
           body: "Release ${{ github.ref }}"
           files: |
-            dist/*.whl
+            ./dist/*.whl
   
   # build-arm-macos:
   #   runs-on: macos-latest
