@@ -1,3 +1,0 @@
-Cython >= 3.0.10
-invoke >= 2.2.0
-pybind11 >= 2.11.1
