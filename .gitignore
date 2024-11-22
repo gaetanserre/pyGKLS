@@ -4,3 +4,4 @@ build/
 outcmaes/
 __pycache__
 gkls.cc
+gkls.egg-info/

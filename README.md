@@ -18,7 +18,7 @@ The Python interface is simple and easy to use. Here is an example of how to gen
 from gkls import GKLS
 
 # Create an instance of the GKLS class
-gkls = GKLS(2, 2, [-1, 1], -1, deterministic=True)
+gkls = GKLS(2, 2, [-1, 1], -1)
 
 x = [0.5, 0.5]
 
@@ -31,13 +31,13 @@ print(f"D2_grad = {gkls.get_d2_grad(x)}")
 
 print(f"D2_hessian = {gkls.get_d2_hess(x)}")
 ```
-The output of the above code is:
+One output of the above code (stochastic) is:
 ```
-D_f = 1.5100378326790798
-D2_f = 1.5100378326790798
-ND_f = 1.5100378326790798
-D_grad = [2.3881468199540072, -0.5804361265978222]
-D2_grad = [2.3881468199540072, -0.5804361265978222]
+D_f = 2.0314828290164897
+D2_f = 2.0314828290164897
+ND_f = 2.0314828290164897
+D_grad = [1.7408628759925895, 2.2572832704507357]
+D2_grad = [1.7408628759925895, 2.2572832704507357]
 D2_hessian = [[2.0, 0.0], [0.0, 2.0]]
 ```
 
