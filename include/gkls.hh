@@ -1,3 +1,7 @@
+/*
+ * Created in 2024 by Gaëtan Serré
+ */
+
 /******************************************************************************/
 /*        GKLS-Generator of Classes of ND  (non-differentiable),              */
 /*                                 D  (continuously differentiable), and      */
@@ -35,6 +39,12 @@
 /*  (3) distance from the paraboloid vertex to the global minimizer           */
 /*  (4) radius of the attraction region of the global minimizer               */
 /******************************************************************************/
+
+#include "rnd_gen.hh"
+#include <vector>
+#include "stdlib.h"
+
+using namespace std;
 
 #if !defined(__GKLS_H)
 #define __GKLS_H
@@ -118,55 +128,99 @@ typedef struct
                                   /* (the resting elements of the list)                         */
 } T_GKLS_GlobalMinima;
 
-/*-------------- Variables accessible by the user --------------------- */
-extern double *GKLS_domain_left; /* left boundary vector of D  */
-/* D=[GKLS_domain_left; GKLS_domain_ight] */
-extern double *GKLS_domain_right; /* right boundary vector of D */
+class GKLS
+{
+public:
+  // Deterministic constructors
+  GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_dist, double global_radius, double global_value, bool deterministic);
 
-extern unsigned int GKLS_dim;        /* dimension of the problem,        */
-                                     /* 2<=test_dim<NUM_RND (see random) */
-extern unsigned int GKLS_num_minima; /* number of local minima, >=2  */
+  GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_value, bool deterministic);
 
-extern double GKLS_global_dist;   /* distance from the paraboloid minimizer  */
-                                  /* to the global minimizer                 */
-extern double GKLS_global_radius; /* radius of the global minimizer          */
-                                  /* attraction region                       */
-extern double GKLS_global_value;  /* global minimum value,                   */
-                                  /* test_global_value < GKLS_PARABOLOID_MIN */
-extern T_GKLS_Minima GKLS_minima;
-/* see the structures type description     */
-extern T_GKLS_GlobalMinima GKLS_glob;
+  ~GKLS();
 
-/*------------------------User function prototypes -------------------------*/
+  double get_d_func(vector<double> x);
 
-int GKLS_domain_alloc(double domain_lo, double domain_hi); /* allocate boundary vectors   */
+  double get_d2_func(vector<double> x);
 
-void GKLS_domain_free(void); /* deallocate boundary vectors */
+  double get_nd_func(vector<double> x);
 
-int GKLS_set_default(void); /* set default values of the input parameters  */
-                            /* and allocate the boundary vectors if necessary */
-void GKLS_free(void);       /* deallocate memory needed for the generator  */
+  vector<double> get_d_gradient(vector<double> x);
 
-int GKLS_parameters_check(void); /* test the validity of the input parameters*/
+  vector<double> get_d2_gradient(vector<double> x);
 
-int GKLS_arg_generate(unsigned int); /* test function generator */
+  vector<vector<double>> get_d2_hessian(vector<double> x);
 
-double GKLS_ND_func(double *); /* evaluation of an ND-typed test function  */
+  double get_global_minimum();
 
-double GKLS_D_func(double *); /* evaluation of a D-typed test function    */
+private:
+  bool deterministic;
+  double rnd_num[NUM_RND];
 
-double GKLS_D2_func(double *); /* evaluation of a D2-type test function    */
+  double *GKLS_domain_left = NULL; /* left boundary vector of D  */
+  /* D=[GKLS_domain_left; GKLS_domain_right] */
+  double *GKLS_domain_right = NULL; /* right boundary vector of D */
 
-double GKLS_D_deriv(unsigned int, double *);
-/* first order partial derivative of the D-typed test function   */
-double GKLS_D2_deriv1(unsigned int, double *);
-/* first order partial derivative of the D2-typed test function  */
-double GKLS_D2_deriv2(unsigned int, unsigned int, double *);
-/* second order partial derivative of the D2-typed test function */
-int GKLS_D_gradient(double *, double *); /* gradient of the D-type test function  */
+  unsigned int GKLS_dim;        /* dimension of the problem,        */
+                                /* 2<=test_dim<NUM_RND (see random) */
+  unsigned int GKLS_num_minima; /* number of local minima, >=2  */
 
-int GKLS_D2_gradient(double *, double *); /* gradient of the D2-type test function */
+  double GKLS_global_dist;   /* distance from the paraboloid minimizer  */
+                             /* to the global minimizer                 */
+  double GKLS_global_radius; /* radius of the global minimizer          */
+                             /* attraction region                       */
+  double GKLS_global_value;  /* global minimum value,                   */
+                             /* test_global_value < GKLS_PARABOLOID_MIN */
+  T_GKLS_Minima GKLS_minima;
+  /* see the structures type description     */
+  T_GKLS_GlobalMinima GKLS_glob;
 
-int GKLS_D2_hessian(double *, double **); /* Hessian of the D2-type test function  */
+  int isArgSet = 0; /* isArgSet == 1 if all necessary parameters are set */
 
-#endif /* __GKLS_H */
+  double delta;              /* parameter using in D2-type function generation;     */
+                             /* it is chosen randomly from the                      */
+                             /* open interval (0,GKLS_DELTA_MAX_VALUE)              */
+  unsigned long rnd_counter; /* index of random array elements */
+
+  double GKLS_norm(double *x1, double *x2);
+
+  int GKLS_domain_alloc(double domain_lo, double domain_hi); /* allocate boundary vectors   */
+
+  void GKLS_domain_free(); /* deallocate boundary vectors */
+
+  int GKLS_set_default(); /* set default values of the input parameters  */
+                          /* and allocate the boundary vectors if necessary */
+
+  int GKLS_alloc();
+
+  void GKLS_free(); /* deallocate memory needed for the generator  */
+
+  int GKLS_parameters_check(); /* test the validity of the input parameters*/
+
+  int GKLS_coincidence_check();
+
+  int GKLS_set_basins();
+
+  int GKLS_initialize_rnd(unsigned int dim, unsigned int nmin, int nf);
+
+  int GKLS_arg_generate(unsigned int); /* test function generator */
+
+  double GKLS_ND_func(double *); /* evaluation of an ND-typed test function  */
+
+  double GKLS_D_func(double *); /* evaluation of a D-typed test function    */
+
+  double GKLS_D2_func(double *); /* evaluation of a D2-type test function    */
+
+  double GKLS_D_deriv(unsigned int, double *);
+  /* first order partial derivative of the D-typed test function   */
+  double GKLS_D2_deriv1(unsigned int, double *);
+  /* first order partial derivative of the D2-typed test function  */
+  double GKLS_D2_deriv2(unsigned int, unsigned int, double *);
+  /* second order partial derivative of the D2-typed test function */
+  int GKLS_D_gradient(double *, double *); /* gradient of the D-type test function  */
+
+  int GKLS_D2_gradient(double *, double *); /* gradient of the D2-type test function */
+
+  int GKLS_D2_hessian(double *, double **); /* Hessian of the D2-type test function  */
+};
+
+#endif

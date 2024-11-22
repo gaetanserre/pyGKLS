@@ -1,6 +1,7 @@
-import gkls
+from gkls import GKLS
 
-gkls.init()
+# Create an instance of the GKLS class
+gkls = GKLS(2, 2, [-1, 1], -1, deterministic=True)
 
 x = [0.5, 0.5]
 
@@ -12,5 +13,3 @@ print(f"D_grad = {gkls.get_d_grad(x)}")
 print(f"D2_grad = {gkls.get_d2_grad(x)}")
 
 print(f"D2_hessian = {gkls.get_d2_hess(x)}")
-
-gkls.free()

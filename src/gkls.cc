@@ -1,116 +1,64 @@
-/*******************************************************************************/
-/*        GKLS-Generator of Classes of ND  (non-differentiable),               */
-/*                                 D  (continuously differentiable), and       */
-/*                                 D2 (twice continuously differentiable)      */
-/*        Test Functions for Global Optimization                               */
-/*                                                                             */
-/*   Authors:                                                                  */
-/*                                                                             */
-/*   M.Gaviano, D.E.Kvasov, D.Lera, and Ya.D.Sergeyev                          */
-/*                                                                             */
-/*   (C) 2002-2005                                                             */
-/*                                                                             */
-/*   Each test class is defined by the following parameters:                   */
-/*  (1) problem dimension                                                      */
-/*  (2) number of local minima including paraboloid min and global min         */
-/*  (3) global minimum value                                                   */
-/*  (3) distance from the paraboloid vertex to the global minimizer            */
-/*  (4) radius of the attraction region of the global minimizer                */
-/*******************************************************************************/
-
-/*******************************************************************************/
-/*  The following groups of subroutines are present in the software:           */
-/*   -- parameters setting/checking subroutines:                               */
-/*       int  GKLS_set_default (void);                                         */
-/*       int  GKLS_parameters_check (void);                                    */
-/*   -- test classes generating subroutines:                                   */
-/*       int  GKLS_arg_generate (unsigned int);                                */
-/*       int  GKLS_coincidence_check (void);                                   */
-/*       int  GKLS_set_basins (void);                                          */
-/*   -- test functions calling subroutines:                                    */
-/*       double GKLS_ND_func  (double *);                                      */
-/*	     double GKLS_D_func   (double *);                                      */
-/*		 double GKLS_D2_func  (double *);                                      */
-/*   -- subroutines of evaluation of the partial derivatives of test functions */
-/*       double GKLS_D_deriv   (unsigned int, double *);                       */
-/*       double GKLS_D2_deriv1 (unsigned int, double *);                       */
-/*       double GKLS_D2_deriv2 (unsigned int, unsigned int, double *);         */
-/*   -- subroutines of evaluation of the gradients and hessian matrix          */
-/*      int GKLS_D_gradient  (double *, double *);                             */
-/*      int GKLS_D2_gradient (double *, double *);                             */
-/*      int GKLS_D2_hessian  (double *, double **);                            */
-/*   -- memory allocation/deallocation subroutines:                            */
-/*	     int  GKLS_domain_alloc (void); / void GKLS_domain_free  (void);       */
-/*		 int  GKLS_alloc (void); / void GKLS_free (void);                      */
-/*   -- auxiliary subroutines                                                  */
-/* 	     int    GKLS_initialize_rnd (unsigned int, unsigned int, int);         */
-/*       double GKLS_norm (double *, double *);                                */
-/*******************************************************************************/
+/*
+ * Created in 2024 by Gaëtan Serré
+ */
 
 #include "gkls.hh"
-#include "rnd_gen.hh"
-#include <math.h>
-#include <stdlib.h>
+#include "math.h"
+#include <chrono>
 
-/*---------------- Variables accessible by the user -------------------- */
-double *GKLS_domain_left; /* left boundary vector of D  */
-/* D=[GKLS_domain_left; GKLS_domain_ight] */
-double *GKLS_domain_right; /* right boundary vector of D */
+GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_dist, double global_radius, double global_value, bool deterministic)
+{
+  this->deterministic = deterministic;
 
-unsigned int GKLS_dim;        /* dimension of the problem,        */
-                              /* 2<=GKLS_dim<NUM_RND (see random) */
-unsigned int GKLS_num_minima; /* number of local minima, >=2  */
+  GKLS_set_default();
 
-double GKLS_global_dist;   /* distance from the paraboloid minimizer  */
-                           /* to the global minimizer                 */
-double GKLS_global_radius; /* radius of the global minimizer          */
-                           /* attraction region                       */
-double GKLS_global_value;  /* global minimum value,                   */
-                           /* GKLS_global_value < GKLS_PARABOLOID_MIN */
-T_GKLS_Minima GKLS_minima;
-/* see the structures type description     */
-T_GKLS_GlobalMinima GKLS_glob;
+  this->GKLS_dim = dim;
+  this->GKLS_domain_free();
+  this->GKLS_domain_alloc(domain_lo, domain_hi);
 
-/*--------------------------- Global variables ----------------------*/
-int isArgSet = 0; /* isArgSet == 1 if all necessary parameters are set */
+  this->GKLS_num_minima = num_minima;
 
-double delta;              /* parameter using in D2-type function generation;     */
-                           /* it is chosen randomly from the                      */
-                           /* open interval (0,GKLS_DELTA_MAX_VALUE)              */
-unsigned long rnd_counter; /* index of random array elements */
+  this->GKLS_global_dist = global_dist;
 
-/*------------------ Auxiliary functions prototypes -----------------*/
+  this->GKLS_global_radius = global_radius;
 
-double GKLS_norm(double *, double *);
-int GKLS_alloc(void);
-int GKLS_coincidence_check(void);
-int GKLS_set_basins(void);
-int GKLS_initialize_rnd(unsigned int, unsigned int, int);
+  this->GKLS_global_value = global_value;
 
-/*****************************************************************************/
-/*    Distance between two vectors in the Euclidean space R^(GKLS_dim)       */
-/* INPUT:                                                                    */
-/*    x1, x2 -- arrays of the coordinates of the two vectors x1 and x2       */
-/*              of the dimension GKLS_dim                                    */
-/* RETURN VALUE: Euclidean norm ||x1-x2||                                    */
-/*****************************************************************************/
-double GKLS_norm(double *x1, double *x2)
+  this->GKLS_arg_generate(1);
+}
+
+GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_value, bool deterministic)
+{
+  this->deterministic = deterministic;
+
+  GKLS_set_default();
+
+  this->GKLS_dim = dim;
+  this->GKLS_domain_free();
+  this->GKLS_domain_alloc(domain_lo, domain_hi);
+
+  this->GKLS_num_minima = num_minima;
+
+  this->GKLS_global_value = global_value;
+
+  this->GKLS_arg_generate(1);
+}
+
+GKLS::~GKLS()
+{
+  this->GKLS_free();
+}
+
+double GKLS::GKLS_norm(double *x1, double *x2)
 {
   unsigned int i;
   double norm = 0.0;
   for (i = 0; i < GKLS_dim; i++)
     norm += (x1[i] - x2[i]) * (x1[i] - x2[i]);
   return sqrt(norm);
-} /* GKLS_norm() */
+}
 
-/*****************************************************************************/
-/*     Allocating memory for the boundary vectors of the admissible region   */
-/*     and setting (by default) D=[-1,1]^(GKLS_dim)                          */
-/*     This subroutine should be called before the work with the generator   */
-/* The subroutine has no INPUT parameters                                    */
-/* RETURN VALUE: an error code                                               */
-/*****************************************************************************/
-int GKLS_domain_alloc(double domain_lo, double domain_hi)
+int GKLS::GKLS_domain_alloc(double domain_lo, double domain_hi)
 {
   unsigned int i;
 
@@ -127,26 +75,15 @@ int GKLS_domain_alloc(double domain_lo, double domain_hi)
     GKLS_domain_right[i] = domain_hi;
   }
   return GKLS_OK; /* no errors */
-} /* GKLS_domain_alloc() */
+}
 
-/*****************************************************************************/
-/* Deallocating memory allocated for the boundary vectors                    */
-/* This subroutine should be called at the end of the work with the generator*/
-/*****************************************************************************/
-void GKLS_domain_free()
+void GKLS::GKLS_domain_free()
 {
   free(GKLS_domain_left);
   free(GKLS_domain_right);
-} /* GKLS_domain_free() */
+}
 
-/*****************************************************************************/
-/*   Setting default values of the input parameters                          */
-/*   If the boundary vectors have not been allocated,                        */
-/*   the subroutine allocates them                                           */
-/* The subroutine has no INPUT parameters                                    */
-/* RETURN VALUE: an error code (result of the operation of memory allocation */
-/*****************************************************************************/
-int GKLS_set_default()
+int GKLS::GKLS_set_default()
 {
   unsigned int i;
   int error;
@@ -155,7 +92,6 @@ int GKLS_set_default()
   GKLS_dim = 2;
 
   GKLS_num_minima = 10;
-
   if ((GKLS_domain_left == NULL) || (GKLS_domain_right == NULL))
   {
     /* define the boundaries  */
@@ -175,17 +111,9 @@ int GKLS_set_default()
   GKLS_global_value = GKLS_GLOBAL_MIN_VALUE;
 
   return GKLS_OK;
+}
 
-} /* GKLS_set_default() */
-
-/*****************************************************************************/
-/*     Allocating memory for dynamic arrays                                  */
-/*     (for lists of the structures GKLS_minima and GKLS_glob)               */
-/*     It is called by the generator subroutine GKLS_arg_generator()         */
-/* The subroutine has no INPUT parameters                                    */
-/* RETURN VALUE: an error code                                               */
-/*****************************************************************************/
-int GKLS_alloc()
+int GKLS::GKLS_alloc()
 {
   unsigned int i;
 
@@ -213,13 +141,9 @@ int GKLS_alloc()
     GKLS_glob.num_global_minima = 0;
 
   return GKLS_OK; /* no errors */
-} /* GKLS_alloc() */
+}
 
-/*******************************************************************************/
-/* Deallocating dynamic memory allocated for structures GKLS_minima / GKLS_glob*/
-/* It should be called at the end of the work with a generated test function   */
-/*******************************************************************************/
-void GKLS_free()
+void GKLS::GKLS_free()
 {
   unsigned int i;
 
@@ -235,14 +159,9 @@ void GKLS_free()
   free(GKLS_glob.gm_index);
 
   isArgSet = 0; /* Parameters do not exist more */
-} /* GKLS_free() */
+}
 
-/****************************************************************************/
-/*           Checking the input parameters                                  */
-/* The subroutine has no INPUT parameters                                   */
-/* RETURN VALUE: an error code if there is an erroneous parameter           */
-/****************************************************************************/
-int GKLS_parameters_check()
+int GKLS::GKLS_parameters_check()
 {
   unsigned int i;
   double min_side, tmp;
@@ -273,18 +192,9 @@ int GKLS_parameters_check()
     return GKLS_GLOBAL_RADIUS_ERROR; /* global minimizer attr. radius error */
 
   return GKLS_OK; /* no errors */
-} /* GKLS_parameters_check() */
+}
 
-/*****************************************************************************/
-/*       The subroutine checks possible coincidence of local minimizers      */
-/* The subroutine has no INPUT parameters                                    */
-/* RETURN VALUE: an error code (GKLS_OK if there are no errors):             */
-/*   GKLS_PARABOLA_MIN_COINCIDENCE_ERROR - if some local minimizer coincides */
-/*                                         with the paraboloid minimizer     */
-/*   GKLS_LOCAL_MIN_COINCIDENCE_ERRO     - if there is a pair of identical   */
-/*                                         local minimizers                  */
-/*****************************************************************************/
-int GKLS_coincidence_check()
+int GKLS::GKLS_coincidence_check()
 {
   unsigned int i, j;
 
@@ -304,15 +214,9 @@ int GKLS_coincidence_check()
     }
 
   return GKLS_OK;
+}
 
-} /* GKLS_coincidence_check() */
-
-/*****************************************************************************/
-/*    The subroutine determines attraction regions of local minimizers       */
-/* It has no INPUT parameters                                                */
-/* RETURN VALUE: an error code                                               */
-/*****************************************************************************/
-int GKLS_set_basins()
+int GKLS::GKLS_set_basins()
 {
   unsigned int i, j;
   double temp_min;         /*  temporary  */
@@ -465,44 +369,26 @@ int GKLS_set_basins()
     return GKLS_FLOATING_POINT_ERROR;   /* some programmer's error */
 
   return GKLS_OK;
-} /* GKLS_set_basins() */
+}
 
-/*****************************************************************************/
-/* The subroutine initializes random sequence by generating a seed that      */
-/* depends on a specific test function number, on the number of local minima,*/
-/* and on the problem dimension                                              */
-/* INPUT PARAMETERS:                                                         */
-/*  dim  -- dimension of the problem (dim >= 2);                             */
-/*  nmin -- number of local minima (nmin >= 2);                              */
-/*  nf   -- test function number (from 1 to 100)                             */
-/* RETURN VALUE: normally GKLS_OK                                            */
-/*****************************************************************************/
-int GKLS_initialize_rnd(unsigned int dim, unsigned int nmin, int nf)
+int GKLS::GKLS_initialize_rnd(unsigned int dim, unsigned int nmin, int nf)
 {
-  long seed;
+  long seed = (nf - 1) + (nmin - 1) * 100 + dim * 1000000L;
+  if (!this->deterministic)
+  {
+    seed = chrono::system_clock::now().time_since_epoch().count() % 1073741821;
+  }
   /* seed number between 0 and 2^30-3 = 1,073,741,821*/
 
-  seed = (nf - 1) + (nmin - 1) * 100 + dim * 1000000L;
   /* If big values of nmin and dim are required, */
   /* one must check wether seed <= 1073741821    */
 
   ranf_start(seed);
 
   return GKLS_OK;
-} /* GKLS_initialize_rnd() */
+}
 
-/*****************************************************************************/
-/* The main subroutine of the package that generates randomly the local and  */
-/* the global minimizers and function values at minimizers;                  */
-/* it determines the radii of attraction regions of the minimizers           */
-/* INPUT PARAMETER:                                                          */
-/*   nf -- determines the number of test function, 1 <= nf <= 100            */
-/* RETURN VALUE:                                                             */
-/*   an error code                                                           */
-/* The boundaries vectors should be created and                              */
-/* the parameters of the class should be defined first                       */
-/*****************************************************************************/
-int GKLS_arg_generate(unsigned int nf)
+int GKLS::GKLS_arg_generate(unsigned int nf)
 {
   unsigned int i, j;
   int error;
@@ -647,22 +533,9 @@ int GKLS_arg_generate(unsigned int nf)
   /* its partial derivative by calling corresponding subroutines    */
 
   return error;
+}
 
-} /* GKLS_arg_generate () */
-
-/************************************************************************/
-/*  The subroutine evaluates the generated function                     */
-/*  of the ND-type (non-differentiable)                                 */
-/*                                                                      */
-/* INPUT PARAMETER:                                                     */
-/*   x -- a point of the (GKLS_dim)-dimensional euclidean space         */
-/* RETURN VALUE:                                                        */
-/*   a function value OR                                                */
-/*   GKLS_MAX_VALUE if: (1) the vector x does not belong to D;          */
-/*                      (2) the user tries to call the function without */
-/*                          parameter defining                          */
-/************************************************************************/
-double GKLS_ND_func(double *x)
+double GKLS::GKLS_ND_func(double *x)
 {
   unsigned int i, index;
   double norm, scal, a, rho; /* working variables */
@@ -701,22 +574,9 @@ double GKLS_ND_func(double *x)
   /* Return the value of the quadratic interpolation function */
   return ((1.0 - 2.0 / rho * scal / norm + a / rho / rho) * norm * norm +
           GKLS_minima.f[index]);
+}
 
-} /* GKLS_ND_func() */
-
-/************************************************************************/
-/*  The subroutine evaluates the generated function                     */
-/*  of the D-type (continuously differentiable)                         */
-/*                                                                      */
-/* INPUT PARAMETER:                                                     */
-/*   x -- a point of the (GKLS_dim)-dimensional euclidean space         */
-/* RETURN VALUE:                                                        */
-/*   a function value OR                                                */
-/*   GKLS_MAX_VALUE if: (1) the vector x does not belong to D;          */
-/*                      (2) the user tries to call the function without */
-/*                          parameter defining                          */
-/************************************************************************/
-double GKLS_D_func(double *x)
+double GKLS::GKLS_D_func(double *x)
 {
   unsigned int i, index;
   double norm, scal, a, rho; /* working variables */
@@ -755,22 +615,9 @@ double GKLS_D_func(double *x)
   /* Return the value of the cubic interpolation function */
   return (2.0 / rho / rho * scal / norm - 2.0 * a / rho / rho / rho) * norm * norm * norm +
          (1.0 - 4.0 * scal / norm / rho + 3.0 * a / rho / rho) * norm * norm + GKLS_minima.f[index];
+}
 
-} /* GKLS_D_func() */
-
-/************************************************************************/
-/*  The subroutine evaluates the generated function                     */
-/*  of the D2-type (twice continuously differentiable)                  */
-/*                                                                      */
-/* INPUT PARAMETER:                                                     */
-/*   x -- a point of the (GKLS_dim)-dimensional euclidean space         */
-/* RETURN VALUE:                                                        */
-/*   a function value OR                                                */
-/*   GKLS_MAX_VALUE if: (1) the vector x does not belong to D;          */
-/*                      (2) the user tries to call the function without */
-/*                          parameter defining                          */
-/************************************************************************/
-double GKLS_D2_func(double *x)
+double GKLS::GKLS_D2_func(double *x)
 {
   unsigned int dim, i, index;
   double norm, scal, a, rho; /* working variables */
@@ -814,24 +661,9 @@ double GKLS_D2_func(double *x)
           (-12.0 * scal / norm / rho + 10.0 * a / rho / rho + 3.0 - 1.5 * delta)) *
              norm * norm * norm / rho +
          0.5 * delta * norm * norm + GKLS_minima.f[index];
+}
 
-} /* GKLS_D2_func() */
-
-/*******************************************************************************/
-/*  The subroutine evaluates the first order partial derivative of D-type      */
-/*  function with respect to the variable indicated by the user                */
-/* INPUT PARAMETERS:                                                           */
-/*   var_j -- an index of the variable with respect to which the derivative    */
-/*            is evaluated                                                     */
-/*   x     -- a point of the (GKLS_dim)-dimensional euclidean space            */
-/* RETURN VALUE:                                                               */
-/*   a first order partial derivative value OR                                 */
-/*   GKLS_MAX_VALUE if: (1) the index of variable is out of range [1,GKLS_dim];*/
-/*                      (2) the vector x does not belong to D;                 */
-/*                      (3) the user tries to call the function without        */
-/*                          parameter defining                                 */
-/*******************************************************************************/
-double GKLS_D_deriv(unsigned int var_j, double *x)
+double GKLS::GKLS_D_deriv(unsigned int var_j, double *x)
 {
   unsigned int i, index;
   double norm, scal, dif, a, rho, h; /* working variables */
@@ -878,24 +710,9 @@ double GKLS_D_deriv(unsigned int var_j, double *x)
   return (h * (2.0 / rho / rho * norm - 4.0 / rho) +
           dif * (6.0 / rho / rho * scal - 6.0 / rho / rho / rho * a * norm -
                  8.0 / rho / norm * scal + 6.0 / rho / rho * a + 2.0));
+}
 
-} /* GKLS_D_deriv() */
-
-/*******************************************************************************/
-/*  The subroutine evaluates the first order partial derivative of D2-type     */
-/*  function with respect to the variable indicated by the user                */
-/* INPUT PARAMETERS:                                                           */
-/*   var_j -- an index of the variable with respect to which the derivative    */
-/*            is evaluated                                                     */
-/*   x     -- a point of the (GKLS_dim)-dimensional euclidean space            */
-/* RETURN VALUE:                                                               */
-/*   a first order partial derivative value OR                                 */
-/*   GKLS_MAX_VALUE if: (1) the index of variable is out of range [1,GKLS_dim];*/
-/*                      (2) the vector x does not belong to D;                 */
-/*                      (3) the user tries to call the function without        */
-/*                          parameter defining                                 */
-/*******************************************************************************/
-double GKLS_D2_deriv1(unsigned int var_j, double *x)
+double GKLS::GKLS_D2_deriv1(unsigned int var_j, double *x)
 {
   unsigned int i, index;
   double norm, scal, dif, a, rho, h; /* working variables */
@@ -942,25 +759,9 @@ double GKLS_D2_deriv1(unsigned int var_j, double *x)
   return (h * norm / rho / rho * (-6.0 * norm * norm / rho / rho + 16.0 * norm / rho - 12.0) +
           dif * norm * ((-30.0 / rho / norm * scal + 30 / rho / rho * a + 5.0 - 2.5 * delta) / rho / rho / rho * norm * norm + (64.0 / rho / norm * scal - 60.0 / rho / rho * a - 12.0 + 6.0 * delta) / rho / rho * norm + (-36.0 / rho / norm * scal + 30.0 / rho / rho * a + 9.0 - 4.5 * delta) / rho) +
           dif * delta);
+}
 
-} /* GKLS_D2_deriv1() */
-
-/*******************************************************************************/
-/*  The subroutine evaluates the second order partial derivative of D2-type    */
-/*  function with respect to the variables indicated by the user               */
-/* INPUT PARAMETERS:                                                           */
-/*   var_j, var_k -- indices of the variables with respect to which the        */
-/*                   2nd order partial derivative d^2[f(x)]/(dx_j)(dx_k)       */
-/*                   is evaluated                                              */
-/*   x            -- a point of the (GKLS_dim)-dimensional euclidean space     */
-/* RETURN VALUE:                                                               */
-/*   a second order partial derivative value OR                                */
-/*   GKLS_MAX_VALUE if:(1) the index of a variable is out of range [1,GKLS_dim]*/
-/*                     (2) the vector x does not belong to D;                  */
-/*                     (3) the user tries to call the function without         */
-/*                         parameter defining                                  */
-/*******************************************************************************/
-double GKLS_D2_deriv2(unsigned int var_j, unsigned int var_k, double *x)
+double GKLS::GKLS_D2_deriv2(unsigned int var_j, unsigned int var_k, double *x)
 {
   unsigned int i, index;
   double norm, scal, a, rho,
@@ -1043,20 +844,9 @@ double GKLS_D2_deriv2(unsigned int var_j, unsigned int var_k, double *x)
             delta;
   /* Return the value of d^2[Q(x)]/dx[var_j]dx[var_k] of the D2-type function */
   return dQ_jk;
+}
 
-} /* GKLS_D2_deriv2() */
-
-/*******************************************************************************/
-/*  The subroutine evaluates the gradient of the D-type test function          */
-/* INPUT PARAMETERS:                                                           */
-/*   x -- a point of the (GKLS_dim)-dimensional euclidean space                */
-/*   g -- a pointer to the allocated array of the dimension GKLS_dim           */
-/* RETURN VALUES:                                                              */
-/*   an error code (that can be: GKLS_OK -- no error, or                       */
-/*                               GKLS_DERIV_EVAL_ERROR -- otherwise)           */
-/*   g -- a pointer to the array of gradient coordinates                       */
-/*******************************************************************************/
-int GKLS_D_gradient(double *x, double *g)
+int GKLS::GKLS_D_gradient(double *x, double *g)
 {
   unsigned int i;
   int error_code = GKLS_OK;
@@ -1073,19 +863,9 @@ int GKLS_D_gradient(double *x, double *g)
       error_code = GKLS_DERIV_EVAL_ERROR;
   }
   return error_code;
-} /* GKLS_D_gradient() */
+}
 
-/*******************************************************************************/
-/*  The subroutine evaluates the gradient of the D2-type test function         */
-/* INPUT PARAMETERS:                                                           */
-/*   x -- a point of the (GKLS_dim)-dimensional euclidean space                */
-/*   g -- a pointer to the allocated array of the dimension GKLS_dim           */
-/* RETURN VALUES:                                                              */
-/*   an error code (that can be: GKLS_OK -- no error, or                       */
-/*                               GKLS_DERIV_EVAL_ERROR -- otherwise)           */
-/*   g -- a pointer to the array of gradient coordinates                       */
-/*******************************************************************************/
-int GKLS_D2_gradient(double *x, double *g)
+int GKLS::GKLS_D2_gradient(double *x, double *g)
 {
   unsigned int i;
   int error_code = GKLS_OK;
@@ -1102,19 +882,9 @@ int GKLS_D2_gradient(double *x, double *g)
       error_code = GKLS_DERIV_EVAL_ERROR;
   }
   return error_code;
-} /* GKLS_D2_gradient() */
+}
 
-/*******************************************************************************/
-/*  The subroutine evaluates the Hessian matrix of the D2-type test function   */
-/* INPUT PARAMETERS:                                                           */
-/*   x -- a point of the (GKLS_dim)-dimensional euclidean space                */
-/*   h -- a pointer to the allocated matrix of dimension[GKLS_dim,GKLS_dim]    */
-/* RETURN VALUES:                                                              */
-/*   an error code (that can be: GKLS_OK -- no error, or                       */
-/*                               GKLS_DERIV_EVAL_ERROR -- otherwise            */
-/*   h -- a pointer to the Hessian matrix                                      */
-/*******************************************************************************/
-int GKLS_D2_hessian(double *x, double **h)
+int GKLS::GKLS_D2_hessian(double *x, double **h)
 {
   unsigned int i, j;
   int error_code = GKLS_OK;
@@ -1135,6 +905,4 @@ int GKLS_D2_hessian(double *x, double **h)
         error_code = GKLS_DERIV_EVAL_ERROR;
     }
   return error_code;
-} /* GKLS_D2_hessian() */
-
-/****************************** gkls.c ******************************/
+}

@@ -28,6 +28,8 @@ jobs:
       - name: Install gkls
         run: |
           python -m build --sdist --wheel
+          pip install .
+          python test.py
       
       - name: Upload artifact
         uses: actions/upload-artifact@master

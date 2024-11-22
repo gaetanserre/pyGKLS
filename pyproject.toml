@@ -1,10 +1,10 @@
 [project]
 name = "gkls"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = ["Cython==3.0.11"]
 
 [build-system]
-requires = ["setuptools", "Cython==3.0.11"]
+requires = ["setuptools", "toml", "Cython==3.0.11"]
 
 [tool.setuptools.packages.find]
 where = ["src", "include"]

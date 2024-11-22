@@ -1,8 +1,6 @@
 #include <random>
 #include "rnd_gen.hh"
 
-double rnd_num[NUM_RND];
-
 std::default_random_engine engine;
 std::uniform_real_distribution<double> dist(0.0, 1.0);
 

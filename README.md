@@ -1,6 +1,6 @@
 ## pyGKLS
 
-pyGKLS is a Python wrapper for the GKLS generator of global optimization test functions ([Giavano et al., 2003](https://dl.acm.org/doi/10.1145/962437.962444)). It uses the original C implementation of the generator and provides a Python interface using Cython to generate the test functions. pyGKLS also encompass a C++ wrapper around the original C implementation to provide a more user-friendly interface that can be used in C++ projects (see `src/example.cc`).
+pyGKLS is a Python wrapper for the GKLS generator of global optimization test functions ([Giavano et al., 2003](https://dl.acm.org/doi/10.1145/962437.962444)). It uses the original C implementation of the generator and provides a Python interface using Cython to generate the test functions. pyGKLS encompass a C++ class that wraps the original C implementation to provide a more user-friendly interface that can be used in C++ projects (see `src/example.cc`) or Python projects (see `test.py`).
 
 ### Random number generator
 The original GKLS generator uses a random number generator based introduced by Knuth in his book "The Art of Computer Programming". pyGKLS uses the Mersenne Twister random number generator from the C++ standard library to generate random numbers.
@@ -12,16 +12,13 @@ pip install .
 ```
 This will build the C++ dynamic library and the Cython package.
 
-
-> [!WARNING]  
-> To use pyGKLS in Jupyter notebooks, it seems that one needs to put the shared library (`libpygkls.{so|dylib}`) in the global library path (e.g. `/usr/lib`), or to create a symbolic link. One can also put the shared library in the same directory as the notebook.
-
 ### Usage
 The Python interface is simple and easy to use. Here is an example of how to generate a GKLS function:
 ```python
-import gkls
+from gkls import GKLS
 
-gkls.init()
+# Create an instance of the GKLS class
+gkls = GKLS(2, 2, [-1, 1], -1, deterministic=True)
 
 x = [0.5, 0.5]
 
@@ -34,16 +31,25 @@ print(f"D2_grad = {gkls.get_d2_grad(x)}")
 
 print(f"D2_hessian = {gkls.get_d2_hess(x)}")
 ```
-Arguments can be passed to the `init` function to control the properties of the generated function. The `init` function has the following signature:
+The output of the above code is:
+```
+D_f = 1.5100378326790798
+D2_f = 1.5100378326790798
+ND_f = 1.5100378326790798
+D_grad = [2.3881468199540072, -0.5804361265978222]
+D2_grad = [2.3881468199540072, -0.5804361265978222]
+D2_hessian = [[2.0, 0.0], [0.0, 2.0]]
+```
+
+Arguments can be passed to the `GKLS` constructor function to control the properties of the generated function. The constructor has the following signature:
 ```python
-def init(
-  nf=1, # number of the function in the function class (1 <= nf <= 100)
-  dim=None, # dimension of the function
-  num_minima=None, # number of local minima
-  domain_lo=None, # lower bound of the domain
-  domain_hi=None, # upper bound of the domain
-  global_dist=None, # distance from the paraboloid minimizer to the global minimizer
-  global_radius=None, # radius of the global minimizer attraction region
-  global_value=None # global minimum value
-  )
+GKLS(
+  dim : int, # dimension of the function
+  num_minima : int, # number of local minima
+  domain : List[float], # domain of the function (i.e. [domain_low, domain_high])
+  global_value : float # global minimum value
+  global_dist=None : float, # distance from the paraboloid minimizer to the global minimizer
+  global_radius=None : float, # radius of the global minimizer attraction region
+  deterministic=False : bool, # if True, the generation of the function is deterministic
+)
 ```

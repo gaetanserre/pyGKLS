@@ -15,8 +15,6 @@
 
 #define NUM_RND 1009 /* size of the array of random numbers */
 
-extern double rnd_num[NUM_RND]; /* array of random numbers */
-
 /* For rnd_gen.c */
 void ranf_array(double aa[], int n); /* put n new random fractions in aa */
 /* double *aa  - destination */

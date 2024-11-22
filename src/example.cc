@@ -1,12 +1,16 @@
 #include <cstdio>
 #include <vector>
-#include "wrapper.hh"
+#include "gkls.hh"
 
 int main(int argc, char **argv)
 {
-  GKLS::set_default();
-  GKLS::generate(1);
+  GKLS gkls(2, 2, -1, 1, -1, true);
   std::vector<double> x = {0.5, 0.5};
-  printf("D_f x = %f\n", GKLS::get_d_func(x));
+  double y = gkls.get_d_func(x);
+  printf("D_f x = %g\n", y);
+
+  GKLS gkls2(2, 2, -1, 1, -1, true);
+  double y2 = gkls2.get_d_func(x);
+  printf("y1 = %g, y2 = %g\n", gkls.get_d_func(x), y2);
   return 0;
 }
