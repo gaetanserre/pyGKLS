@@ -31,7 +31,7 @@ print(f"D2_grad = {gkls.get_d2_grad(x)}")
 
 print(f"D2_hessian = {gkls.get_d2_hess(x)}")
 ```
-One output of the above code (stochastic) is:
+One output of the above code (stochastic) could be:
 ```
 D_f = 2.0314828290164897
 D2_f = 2.0314828290164897
