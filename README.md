@@ -6,7 +6,7 @@ pyGKLS is a Python wrapper for the GKLS generator of global optimization test fu
 The original GKLS generator uses a random number generator based introduced by Knuth in his book "The Art of Computer Programming". pyGKLS uses the Mersenne Twister random number generator from the C++ standard library to generate random numbers.
 
 ### Installation
-To install pyGKLS, one need `Python 3.10` or later, `CMake 3.30` or later, and a C++ compiler that supports C++23. Then clone the repository and run the following commands:
+To install pyGKLS, one need `Python 3.12` or later, `CMake 3.30` or later, and a C++ compiler that supports C++23. Then clone the repository and run the following commands:
 ```bash
 pip install gkls
 ```
