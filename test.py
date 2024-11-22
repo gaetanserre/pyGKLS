@@ -1,7 +1,7 @@
 from gkls import GKLS
 
 # Create an instance of the GKLS class
-gkls = GKLS(2, 2, [-1, 1], -1, deterministic=True)
+gkls = GKLS(2, 2, [-1, 1], -1)
 
 x = [0.5, 0.5]
 
