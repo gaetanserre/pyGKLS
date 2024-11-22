@@ -59,17 +59,6 @@ class GKLSBuild(build_ext):
         os.system(f"cython --cplus -3 {pkg_name}.pyx -o {pkg_name}.cc")
 
         # Compile the C++ files
-        if "CIBUILDWHEEL" in os.environ and os.environ["CIBUILDWHEEL"] == "1":
-            python_lib_path = f"{sysconfig.get_config_var('LIBDIR')}"
-            os.system(f"ls -R {python_lib_path} | grep .so")
-
-            os.system(
-                "cd build "
-                f"&& cmake -DEXT_NAME={ext_name} -DCYTHON_CPP_FILE={pkg_name}.cc -DPYTHON_LIB_PATH={python_lib_path} .. "
-                "&& make -j "
-                f"&& mv lib{lib_name} {lib_ext_dir} "
-            )
-
         os.system(
             "cd build "
             f"&& cmake -DEXT_NAME={ext_name} -DCYTHON_CPP_FILE={pkg_name}.cc .. "
