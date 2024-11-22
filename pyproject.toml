@@ -1,7 +1,15 @@
 [project]
+authors = [
+  { name = "Gaëtan Serré", email = "gaetan.serre@ens-paris-saclay.fr" },
+]
+maintainers = [
+  { name = "Gaëtan Serré", email = "gaetan.serre@ens-paris-saclay.fr" },
+]
 name = "gkls"
 version = "1.0.3"
 dependencies = ["Cython==3.0.11"]
+readme = "README.md"
+license = { file = "LICENSE" }
 
 [build-system]
 requires = ["setuptools", "toml", "Cython==3.0.11"]

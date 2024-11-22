@@ -8,7 +8,7 @@ The original GKLS generator uses a random number generator based introduced by K
 ### Installation
 To install pyGKLS, one need `Python 3.10` or later, `CMake 3.30` or later, and a C++ compiler that supports C++23. Then clone the repository and run the following commands:
 ```bash
-pip install .
+pip install gkls
 ```
 This will build the C++ dynamic library and the Cython package.
 
