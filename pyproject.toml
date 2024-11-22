@@ -16,9 +16,3 @@ Repository = "https://github.com/gaetanserre/pyGKLS"
 
 [build-system]
 requires = ["setuptools", "toml", "Cython==3.0.11"]
-
-[tool.setuptools.packages.find]
-where = ["src", "include"]
-
-[tool.setuptools.exclude-package-data]
-optimizers = ["pygkls.cc"]
