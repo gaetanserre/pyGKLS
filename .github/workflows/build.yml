@@ -91,41 +91,10 @@ jobs:
           python-version: "3.13"
 
       - name: Upload to PyPI
+        if: startsWith(github.ref, 'refs/tags/')
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_TOKEN_NAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
         run: |
           python -m pip install --upgrade twine
           python -m twine upload dist/**/* --verbose
-
-
-  
-  # build-arm-macos:
-  #   runs-on: macos-latest
-  #   needs: build-x86-linux
-  #   steps:
-  #     - uses: actions/checkout@v4
-      
-  #     - name: Install dependencies
-  #       run: |
-  #         brew uninstall python --ignore-dependencies
-  #         brew cleanup python
-  #         python -m pip install --upgrade pip
-  #         python -m pip install build
-
-  #     - name: Build GKLS
-  #       run: |
-  #         python -m build --sdist --wheel
-      
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@master
-  #       with:
-  #         name: linux-artifact
-      
-  #     - name: Release
-  #       uses: softprops/action-gh-release@v2
-  #       if: startsWith(github.ref, 'refs/tags/')
-  #       with:
-  #         body: "Release ${{ github.ref }}"
-  #         files: |
-  #           dist/*.whl
