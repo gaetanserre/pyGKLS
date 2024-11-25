@@ -8,7 +8,7 @@ The original GKLS generator uses a random number generator based introduced by K
 ### Installation
 To install pyGKLS, one needs to have `Python 3.12` or later.
 
-#### Linux (x86_64)
+#### Linux (x86_64) or macOS (arm64)
 Run the following command:
 ```bash
 pip install gkls
