@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: False
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ ubuntu-latest, macos-latest, macos-14 ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,7 +31,6 @@ jobs:
 
       - name: Build wheels
         env:
-          # only build CPython-3.9+ and skip 32-bit builds
           CIBW_BUILD: cp312-* cp313-*
           CIBW_SKIP: "*-manylinux_i686 *-musllinux*"
           # use latest build

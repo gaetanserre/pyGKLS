@@ -19,6 +19,15 @@ def create_directory(path: Path):
     return path
 
 
+def get_shared_lib_ext():
+    if sys.platform.startswith("linux"):
+        return ".so"
+    elif sys.platform.startswith("darwin"):
+        return ".dylib"
+    else:
+        return ".dll"
+
+
 class GKLSBuildExtension(Extension):
     def __init__(self, name: str, version: str):
         super().__init__(name, sources=[])
@@ -51,9 +60,7 @@ class GKLSBuild(build_ext):
 
         pkg_name = "gkls"
         ext_suffix = os.popen("python3-config --extension-suffix").read().strip()
-        lib_name = pkg_name + ext_suffix
-        ext_name = ".".join((lib_name).split(".")[:-1])
-        lib_ext_dir = Path(f"{ext_dir}/{lib_name}")
+        lib_name = ".".join((pkg_name + ext_suffix).split(".")[:-1])
 
         # Compile the Cython file
         os.system(f"cython --cplus -3 {pkg_name}.pyx -o {pkg_name}.cc")
@@ -61,9 +68,9 @@ class GKLSBuild(build_ext):
         # Compile the C++ files
         os.system(
             "cd build "
-            f"&& cmake -DEXT_NAME={ext_name} -DCYTHON_CPP_FILE={pkg_name}.cc .. "
+            f"&& cmake -DEXT_NAME={lib_name} -DCYTHON_CPP_FILE={pkg_name}.cc .. "
             "&& make -j "
-            f"&& mv lib{lib_name} {lib_ext_dir} "
+            f"&& mv lib{lib_name}{get_shared_lib_ext()} {ext_dir / (lib_name + ".so")} "
         )
 
 
