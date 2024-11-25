@@ -6,7 +6,7 @@
 #include "math.h"
 #include <chrono>
 
-GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_dist, double global_radius, double global_value, bool deterministic)
+GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_dist, double global_radius, double global_min, bool deterministic)
 {
   this->deterministic = deterministic;
 
@@ -22,12 +22,12 @@ GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double d
 
   this->GKLS_global_radius = global_radius;
 
-  this->GKLS_global_value = global_value;
+  this->GKLS_global_value = global_min;
 
   this->GKLS_arg_generate(1);
 }
 
-GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_value, bool deterministic)
+GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_min, bool deterministic)
 {
   this->deterministic = deterministic;
 
@@ -39,7 +39,7 @@ GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double d
 
   this->GKLS_num_minima = num_minima;
 
-  this->GKLS_global_value = global_value;
+  this->GKLS_global_value = global_min;
 
   this->GKLS_arg_generate(1);
 }

@@ -132,9 +132,9 @@ class GKLS
 {
 public:
   // Deterministic constructors
-  GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_dist, double global_radius, double global_value, bool deterministic);
+  GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_dist, double global_radius, double global_min, bool deterministic);
 
-  GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_value, bool deterministic);
+  GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_min, bool deterministic);
 
   ~GKLS();
 

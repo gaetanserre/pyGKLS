@@ -54,7 +54,7 @@ GKLS(
   dim : int, # dimension of the function
   num_minima : int, # number of local minima
   domain : List[float], # domain of the function (i.e. [domain_low, domain_high])
-  global_value : float # global minimum value
+  global_min : float # global minimum value
   global_dist=None : float, # distance from the paraboloid minimizer to the global minimizer
   global_radius=None : float, # radius of the global minimizer attraction region
   deterministic=False : bool, # if True, the generation of the function is deterministic
