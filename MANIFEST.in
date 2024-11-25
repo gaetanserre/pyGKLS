@@ -5,3 +5,5 @@ include CMakeLists.txt
 include LICENSE
 include README.md
 include MANIFEST.in
+prune */__pycache__
+recursive-exclude */__pycache__ *
