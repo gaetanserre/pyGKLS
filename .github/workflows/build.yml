@@ -33,7 +33,6 @@ jobs:
         env:
           CIBW_BUILD: cp312-* cp313-*
           CIBW_SKIP: "*-manylinux_i686 *-musllinux*"
-          # use latest build
           CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64
           CIBW_BUILD_VERBOSITY: 3
         run: |
