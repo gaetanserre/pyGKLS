@@ -3,6 +3,19 @@ project(gkls)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_FLAGS "-fPIC -O3")
 
+set(Python_EXECUTABLE "python" CACHE STRING "Path to the Python executable")
+
+execute_process(
+  COMMAND
+  ${Python_EXECUTABLE} -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())"
+  OUTPUT_VARIABLE
+  Python_INCLUDE_DIRS
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+set(Python_INCLUDE_DIRS ${Python_INCLUDE_DIRS} CACHE STRING "" FORCE)
+message(STATUS "Python_EXECUTABLE: ${Python_EXECUTABLE}")
+
 # Detect platform
 if(UNIX AND NOT APPLE)
   set(LINUX TRUE)
@@ -13,12 +26,7 @@ else()
 endif()
 
 # Find Python
-if(APPLE)
-  find_package(Python COMPONENTS Development.Module REQUIRED)
-else()
-  find_package(Python COMPONENTS Development.Module REQUIRED)
-endif()
-
+# find_package(Python COMPONENTS Development.Module REQUIRED)
 message(STATUS "Python_INCLUDE_DIRS: ${Python_INCLUDE_DIRS}")
 
 # Source files

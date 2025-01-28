@@ -1,7 +1,6 @@
 # Create a setup.py file to install the optimizers module using invoke.
 
 import sys
-import sysconfig
 from setuptools import setup, Extension
 from toml import load
 import os
@@ -10,6 +9,7 @@ import shutil
 from pathlib import Path
 from subprocess import check_call
 from setuptools.command.build_ext import build_ext
+from importlib.machinery import EXTENSION_SUFFIXES
 
 
 def create_directory(path: Path):
@@ -55,11 +55,13 @@ class GKLSBuild(build_ext):
         return "Debug" if self.debug else "Release"
 
     def build_extension(self, ext: Extension):
+        python_path = Path(sys.executable).absolute()
+
         ext_dir = Path(self.get_ext_fullpath(ext.name)).parent.absolute()
         create_directory(ext_dir)
 
         pkg_name = "gkls"
-        ext_suffix = os.popen("python3-config --extension-suffix").read().strip()
+        ext_suffix = EXTENSION_SUFFIXES[0]
         lib_name = ".".join((pkg_name + ext_suffix).split(".")[:-1])
 
         # Compile the Cython file
@@ -68,7 +70,7 @@ class GKLSBuild(build_ext):
         # Compile the C++ files
         os.system(
             "cd build "
-            f"&& cmake -DEXT_NAME={lib_name} -DCYTHON_CPP_FILE={pkg_name}.cc .. "
+            f"&& cmake -DPython_EXECUTABLE={python_path} -DEXT_NAME={lib_name} -DCYTHON_CPP_FILE={pkg_name}.cc .. "
             "&& make -j "
             f"&& mv lib{lib_name}{get_shared_lib_ext()} {ext_dir / (lib_name + ".so")} "
         )
