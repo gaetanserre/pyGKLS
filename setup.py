@@ -55,8 +55,6 @@ class GKLSBuild(build_ext):
         return "Debug" if self.debug else "Release"
 
     def build_extension(self, ext: Extension):
-        python_path = Path(sys.executable).absolute()
-
         ext_dir = Path(self.get_ext_fullpath(ext.name)).parent.absolute()
         create_directory(ext_dir)
 
@@ -70,7 +68,7 @@ class GKLSBuild(build_ext):
         # Compile the C++ files
         os.system(
             "cd build "
-            f"&& cmake -DPython_EXECUTABLE={python_path} -DEXT_NAME={lib_name} -DCYTHON_CPP_FILE={pkg_name}.cc .. "
+            f"&& cmake -DPython_EXECUTABLE={sys.executable} -DEXT_NAME={lib_name} -DCYTHON_CPP_FILE={pkg_name}.cc .. "
             "&& make -j "
             f"&& mv lib{lib_name}{get_shared_lib_ext()} {ext_dir / (lib_name + ".so")} "
         )

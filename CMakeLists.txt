@@ -15,6 +15,7 @@ execute_process(
 
 set(Python_INCLUDE_DIRS ${Python_INCLUDE_DIRS} CACHE STRING "" FORCE)
 message(STATUS "Python_EXECUTABLE: ${Python_EXECUTABLE}")
+message(STATUS "Python_INCLUDE_DIRS: ${Python_INCLUDE_DIRS}")
 
 # Detect platform
 if(UNIX AND NOT APPLE)
@@ -24,10 +25,6 @@ elseif(UNIX)
 else()
   set(WINDOWS TRUE)
 endif()
-
-# Find Python
-# find_package(Python COMPONENTS Development.Module REQUIRED)
-message(STATUS "Python_INCLUDE_DIRS: ${Python_INCLUDE_DIRS}")
 
 # Source files
 file(GLOB_RECURSE SRC_FILES src/*.cc)
