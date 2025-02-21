@@ -1,7 +1,7 @@
 # /bin/bash
 
 pkg_name=gkls
-ext_suffix=$(python3-config --extension-suffix)
+ext_suffix=$(python -c "from importlib.machinery import EXTENSION_SUFFIXES; print(EXTENSION_SUFFIXES[0])")
 
 lib_name=${pkg_name}${ext_suffix}
 
