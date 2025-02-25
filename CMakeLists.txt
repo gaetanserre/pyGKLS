@@ -39,7 +39,7 @@ include_directories(include C:/Users/Gaëtan/miniconda3/include ${Python_INCLUDE
 add_library(${EXT_NAME} SHARED ${SRC_FILES} ${CYTHON_CPP_FILE})
 
 # Compile example.cc
-# add_executable(example ${SRC_FILES})
+add_executable(example ${SRC_FILES})
 
 # Set macOS-specific linker flags
 if(APPLE)
