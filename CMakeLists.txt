@@ -33,7 +33,7 @@ message(STATUS "Python_INCLUDE_DIRS: ${Python_INCLUDE_DIRS}")
 file(GLOB_RECURSE SRC_FILES src/*.cc)
 
 # Include directories
-include_directories(include ${Python_INCLUDE_DIRS})
+include_directories(include C:/Users/Gaëtan/miniconda3/include ${Python_INCLUDE_DIRS})
 
 # Add the shared library
 add_library(${EXT_NAME} SHARED ${SRC_FILES} ${CYTHON_CPP_FILE})
