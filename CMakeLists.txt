@@ -33,10 +33,18 @@ message(STATUS "Python_INCLUDE_DIRS: ${Python_INCLUDE_DIRS}")
 file(GLOB_RECURSE SRC_FILES src/*.cc)
 
 # Include directories
-include_directories(include C:/Users/Gaëtan/miniconda3/include ${Python_INCLUDE_DIRS})
+include_directories(include ${Python_INCLUDE_DIRS})
 
 # Add the shared library
-add_library(${EXT_NAME} SHARED ${SRC_FILES} ${CYTHON_CPP_FILE})
+if(WINDOWS)
+  # Find Python library
+  find_package(Python COMPONENTS Development.Module REQUIRED)
+  message(STATUS "Python_LIBRARIES: ${Python_LIBRARIES}")
+  add_library(${EXT_NAME} SHARED ${SRC_FILES} ${CYTHON_CPP_FILE})
+  target_link_libraries(${EXT_NAME} ${Python_LIBRARIES})
+else()
+  add_library(${EXT_NAME} SHARED ${SRC_FILES} ${CYTHON_CPP_FILE})
+endif()
 
 # Compile example.cc
 add_executable(example ${SRC_FILES})
