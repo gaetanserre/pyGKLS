@@ -38,6 +38,9 @@ include_directories(include ${Python_INCLUDE_DIRS})
 # Add the shared library
 add_library(${EXT_NAME} SHARED ${SRC_FILES} ${CYTHON_CPP_FILE})
 
+# Compile example.cc
+add_executable(example ${SRC_FILES})
+
 # Set macOS-specific linker flags
 if(APPLE)
   set_target_properties(
