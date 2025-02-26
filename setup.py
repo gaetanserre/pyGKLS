@@ -54,6 +54,18 @@ class GKLSBuild(build_ext):
     def config(self):
         return "Debug" if self.debug else "Release"
 
+    def cmake_command(self, python_path, lib_name, pkg_name):
+        if platform.system() == "Windows":
+            return f"cmake -G Ninja -DCMAKE_CXX_COMPILER=g++ -DPython_EXECUTABLE={python_path} -DEXT_NAME={lib_name} -DCYTHON_CPP_FILE={pkg_name}.cc .."
+        else:
+            return f"cmake -DPython_EXECUTABLE={python_path} -DEXT_NAME={lib_name} -DCYTHON_CPP_FILE={pkg_name}.cc .."
+
+    def build_command(self):
+        if platform.system() == "Windows":
+            return "ninja"
+        else:
+            return "make -j"
+
     def build_extension(self, ext: Extension):
         python_path = Path(sys.executable).absolute()
 
@@ -70,8 +82,8 @@ class GKLSBuild(build_ext):
         # Compile the C++ files
         os.system(
             "cd build "
-            f"&& cmake -DPython_EXECUTABLE={python_path} -DEXT_NAME={lib_name} -DCYTHON_CPP_FILE={pkg_name}.cc .. "
-            "&& make -j "
+            f"&& {self.cmake_command(python_path, lib_name, pkg_name)} "
+            f"&& {self.build_command()} "
             f"&& mv lib{lib_name}{get_shared_lib_ext()} {ext_dir / (lib_name + ".so")} "
         )
 
