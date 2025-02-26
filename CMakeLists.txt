@@ -40,8 +40,9 @@ if(WINDOWS)
   # Find Python library
   find_package(Python COMPONENTS Development.Module REQUIRED)
   message(STATUS "Python_LIBRARIES: ${Python_LIBRARIES}")
-  add_library(${EXT_NAME} SHARED ${SRC_FILES} ${CYTHON_CPP_FILE})
-  target_link_libraries(${EXT_NAME} ${Python_LIBRARIES})
+  add_library(${EXT_NAME} MODULE ${SRC_FILES} ${CYTHON_CPP_FILE})
+
+# target_link_libraries(${EXT_NAME} ${Python_LIBRARIES})
 else()
   add_library(${EXT_NAME} SHARED ${SRC_FILES} ${CYTHON_CPP_FILE})
 endif()
