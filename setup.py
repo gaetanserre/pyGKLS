@@ -56,15 +56,21 @@ class GKLSBuild(build_ext):
 
     def cmake_command(self, python_path, lib_name, pkg_name):
         if platform.system() == "Windows":
-            return f"cmake -G Ninja -DCMAKE_CXX_COMPILER=g++ -DPython_EXECUTABLE={python_path} -DEXT_NAME={lib_name} -DCYTHON_CPP_FILE={pkg_name}.cc .."
+            return f'cmake -G "Visual Studio 17 2022" -A x64 -DPython_EXECUTABLE={python_path} -DEXT_NAME={lib_name} -DCYTHON_CPP_FILE={pkg_name}.cc ..'
         else:
             return f"cmake -DPython_EXECUTABLE={python_path} -DEXT_NAME={lib_name} -DCYTHON_CPP_FILE={pkg_name}.cc .."
 
     def build_command(self):
         if platform.system() == "Windows":
-            return "ninja"
+            return "cmake --build . --config Release"
         else:
             return "make -j"
+
+    def shared_lib_path(self, lib_name):
+        if platform.system() == "Windows":
+            return f"Release/{lib_name}{get_shared_lib_ext()}"
+        else:
+            return f"lib{lib_name}{get_shared_lib_ext()}"
 
     def build_extension(self, ext: Extension):
         python_path = Path(sys.executable).absolute()
@@ -75,6 +81,7 @@ class GKLSBuild(build_ext):
         pkg_name = "gkls"
         ext_suffix = EXTENSION_SUFFIXES[0]
         lib_name = ".".join((pkg_name + ext_suffix).split(".")[:-1])
+        pkg_ext = ".pyd" if platform.system() == "Windows" else ".so"
 
         # Compile the Cython file
         os.system(f"cython --cplus -3 {pkg_name}.pyx -o {pkg_name}.cc")
@@ -84,7 +91,7 @@ class GKLSBuild(build_ext):
             "cd build "
             f"&& {self.cmake_command(python_path, lib_name, pkg_name)} "
             f"&& {self.build_command()} "
-            f"&& mv lib{lib_name}{get_shared_lib_ext()} {ext_dir / (lib_name + ".so")} "
+            f"&& mv {self.shared_lib_path(lib_name)} {ext_dir / (lib_name + pkg_ext)} "
         )
 
 

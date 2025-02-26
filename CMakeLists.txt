@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
 project(gkls)
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_FLAGS "-fPIC -O3")
 
 set(Python_EXECUTABLE "python" CACHE STRING "Path to the Python executable")
 
@@ -37,17 +35,18 @@ include_directories(include ${Python_INCLUDE_DIRS})
 
 # Add the shared library
 if(WINDOWS)
+  set(CMAKE_CXX_STANDARD 17)
+
   # Find Python library
   find_package(Python COMPONENTS Development.Module REQUIRED)
   message(STATUS "Python_LIBRARIES: ${Python_LIBRARIES}")
-  add_library(${EXT_NAME} MODULE ${SRC_FILES} ${CYTHON_CPP_FILE})
+  add_library(${EXT_NAME} SHARED ${SRC_FILES} ${CYTHON_CPP_FILE})
   target_link_libraries(${EXT_NAME} ${Python_LIBRARIES})
 else()
+  set(CMAKE_CXX_STANDARD 23)
+  set(CMAKE_CXX_FLAGS "-fPIC -O3")
   add_library(${EXT_NAME} SHARED ${SRC_FILES} ${CYTHON_CPP_FILE})
 endif()
-
-# Compile example.cc
-add_executable(example ${SRC_FILES})
 
 # Set macOS-specific linker flags
 if(APPLE)
