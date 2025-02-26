@@ -98,9 +98,11 @@ class GKLSBuild(build_ext):
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
+name = load("pyproject.toml")["project"]["name"]
 version = load("pyproject.toml")["project"]["version"]
 
 setup(
+    name=name,
     version=version,
     ext_modules=[GKLSBuildExtension("gkls", "0.1.0")],
     cmdclass={"build_ext": GKLSBuild},
