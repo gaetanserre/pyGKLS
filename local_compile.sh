@@ -19,7 +19,7 @@ build() {
     cmake -DEXT_NAME=$lib_name -DCYTHON_CPP_FILE=$pkg_name.cc ..
     make -j
   else
-    cmake -DEXT_NAME=$lib_name -DCYTHON_CPP_FILE=$pkg_name.cc -DCMAKE_CXX_COMPILER=g++ -G "Ninja" ..
+    cmake -DEXT_NAME=$lib_name -DCYTHON_CPP_FILE=$pkg_name.cc -DCMAKE_CXX_COMPILER="cl.exe" -G "Ninja" ..
     ninja
   fi
 }
