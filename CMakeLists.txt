@@ -24,7 +24,6 @@ else()
 endif()
 
 # Find Python
-# find_package(Python COMPONENTS Development.Module REQUIRED)
 message(STATUS "Python_INCLUDE_DIRS: ${Python_INCLUDE_DIRS}")
 
 # Source files
