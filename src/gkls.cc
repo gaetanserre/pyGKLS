@@ -6,9 +6,25 @@
 #include "math.h"
 #include <chrono>
 
-GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_dist, double global_radius, double global_min, bool deterministic)
+GenType parse_str(const string &gen_f_str)
 {
-  this->deterministic = deterministic;
+  if (gen_f_str[0] == 's')
+  {
+    return stol(gen_f_str.substr(1));
+  }
+  else if (gen_f_str[0] == 'g')
+  {
+    return GEOMETRY;
+  }
+  else
+  {
+    return RANDOM;
+  }
+}
+
+GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_dist, double global_radius, double global_min, string gen_str)
+{
+  this->gen = parse_str(gen_str);
 
   GKLS_set_default();
 
@@ -27,9 +43,9 @@ GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double d
   this->GKLS_arg_generate(1);
 }
 
-GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_min, bool deterministic)
+GKLS::GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_min, string gen_str)
 {
-  this->deterministic = deterministic;
+  this->gen = parse_str(gen_str);
 
   GKLS_set_default();
 
@@ -374,11 +390,16 @@ int GKLS::GKLS_set_basins()
 int GKLS::GKLS_initialize_rnd(unsigned int dim, unsigned int nmin, int nf)
 {
   long seed = (nf - 1) + (nmin - 1) * 100 + dim * 1000000L;
-  if (!this->deterministic)
+
+  if (holds_alternative<long>(this->gen))
   {
+    seed = *get_if<long>(&this->gen);
+  }
+  else if (holds_alternative<monostate>(this->gen))
+  {
+    /* seed number between 0 and 2^30-3 = 1,073,741,821*/
     seed = chrono::system_clock::now().time_since_epoch().count() % 1073741821;
   }
-  /* seed number between 0 and 2^30-3 = 1,073,741,821*/
 
   /* If big values of nmin and dim are required, */
   /* one must check wether seed <= 1073741821    */

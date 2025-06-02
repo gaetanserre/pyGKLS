@@ -18,7 +18,7 @@ The Python interface is simple and easy to use. Here is an example of how to gen
 ```python
 from gkls import GKLS
 
-# Create an instance of the GKLS class
+# Create an instance of the GKLS class with random generation (default)
 gkls = GKLS(2, 2, [-1, 1], -1)
 
 x = [0.5, 0.5]
@@ -51,6 +51,8 @@ GKLS(
   global_min : float # global minimum value
   global_dist=None : float, # distance from the paraboloid minimizer to the global minimizer
   global_radius=None : float, # radius of the global minimizer attraction region
-  deterministic=False : bool, # if True, the generation of the function is deterministic
+  gen=None : None | "geometry" | int, # generator type. None for random, "geometry" for geometry-based, or an integer for a specific seed
 )
 ```
+
+See [`test.py`](test.py) for more examples of how to use the GKLS class.

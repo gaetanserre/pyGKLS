@@ -43,6 +43,8 @@
 #include "rnd_gen.hh"
 #include <vector>
 #include "stdlib.h"
+#include <string>
+#include <variant>
 
 using namespace std;
 
@@ -128,13 +130,20 @@ typedef struct
                                   /* (the resting elements of the list)                         */
 } T_GKLS_GlobalMinima;
 
+struct Geometry
+{
+};
+using GenType = variant<monostate, Geometry, long>;
+constexpr monostate RANDOM{};
+constexpr Geometry GEOMETRY{};
+
 class GKLS
 {
 public:
   // Deterministic constructors
-  GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_dist, double global_radius, double global_min, bool deterministic);
+  GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_dist, double global_radius, double global_min, string gen_str);
 
-  GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_min, bool deterministic);
+  GKLS(unsigned int dim, unsigned int num_minima, double domain_lo, double domain_hi, double global_min, string gen_str);
 
   ~GKLS();
 
@@ -153,7 +162,7 @@ public:
   double get_global_minimum();
 
 private:
-  bool deterministic;
+  GenType gen;
   double rnd_num[NUM_RND];
 
   double *GKLS_domain_left = NULL; /* left boundary vector of D  */
