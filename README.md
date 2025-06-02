@@ -2,6 +2,8 @@
 
 pyGKLS is a Python wrapper for the GKLS generator of global optimization test functions ([Giavano et al., 2003](https://dl.acm.org/doi/10.1145/962437.962444)). It uses the original C implementation of the generator and provides a Python interface using Cython to generate the test functions. pyGKLS encompass a C++ class that wraps the original C implementation to provide a more user-friendly interface that can be used in C++ projects (see `src/example.cc`) or Python projects (see `test.py`).
 
+[![CI](https://github.com/gaetanserre/pyGKLS/actions/workflows/build.yml/badge.svg)](https://github.com/gaetanserre/pyGKLS/actions/workflows/build.yml)
+
 ### Random number generator
 The original GKLS generator uses a random number generator based introduced by Knuth in his book "The Art of Computer Programming". pyGKLS uses the Mersenne Twister random number generator from the C++ standard library to generate random numbers.
 
