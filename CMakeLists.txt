@@ -35,7 +35,7 @@ include_directories(include ${Python_INCLUDE_DIRS})
 # Add the shared library
 if(WINDOWS)
   set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_FLAGS_RELEASE "/O3")
+  set(CMAKE_CXX_FLAGS_RELEASE "/O2")
 
   # Find Python library
   find_package(Python COMPONENTS Development.Module REQUIRED)
