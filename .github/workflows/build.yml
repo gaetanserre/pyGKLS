@@ -2,13 +2,11 @@ name: Build GKLS
 
 on:
   push:
-    branches: [ "main" ]
     tags:
-      - 'v*'
-  pull_request:
-    branches: [ "main" ]
+    - "v*"
 
   workflow_dispatch:
+
 
 jobs:
   build_dist:
