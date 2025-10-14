@@ -6,8 +6,8 @@ maintainers = [
   { name = "Gaëtan Serré", email = "gaetan.serre@ens-paris-saclay.fr" },
 ]
 name = "gkls"
-version = "1.0.1"
-dependencies = ["Cython==3.0.11"]
+version = "1.0.2"
+dependencies = ["Cython>=3.0.11"]
 description = "Python wrapper for the GKLS generator of global optimization test functions (Giavano et al., 2003)."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -16,4 +16,4 @@ license = { file = "LICENSE" }
 Repository = "https://github.com/gaetanserre/pyGKLS"
 
 [build-system]
-requires = ["setuptools", "toml", "Cython==3.0.11"]
+requires = ["setuptools", "toml", "Cython>=3.0.11"]
